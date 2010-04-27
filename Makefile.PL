@@ -13,10 +13,12 @@ WriteMakefile(
     PL_FILES            => {},
     
     PREREQ_PM => {
-        'Test::More'	=> 0,
-	'LWP' 		=> 0,
-	'URI'		=> 0,
-	'JSON'		=> 0,
+        'Test::More'     => 0,
+	'LWP'            => 0,
+	'URI'            => 0,
+	'JSON'           => 0,
+	'Digest::HMAC'   => 1.02,
+	'Digest::SHA256' => 0.01
     },
 
     MIN_PERL_VERSION => '5.008',
