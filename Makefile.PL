@@ -17,8 +17,7 @@ WriteMakefile(
 	'LWP'            => 0,
 	'URI'            => 0,
 	'JSON'           => 0,
-	'Digest::HMAC'   => 1.02,
-	'Digest::SHA256' => 0.01
+	'Digest::SHA'    => 5.48
     },
 
     MIN_PERL_VERSION => '5.008',
