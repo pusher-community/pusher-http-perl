@@ -8,6 +8,8 @@ use 5.008;
 use JSON;
 use URI;
 use LWP::UserAgent;
+use Digest::MD5 qw(md5_hex);
+use Digest::SHA qw(hmac_sha256_hex);
 
 my $pusher_defaults = {
 	host => 'http://api.pusherapp.com',
@@ -20,28 +22,28 @@ WWW::Pusher - Interface to the Pusher WebSockets API
 
 =head1 VERSION
 
-Version 0.01
+Version 0.02
 
 =cut
 
-our $VERSION = '0.01';
+our $VERSION = '0.02';
 
 =head1 SYNOPSIS
 
     use WWW::Pusher;
 
-    my $pusher   = WWW::Pusher->new(key => 'YOUR API KEY', channel => 'test_channel');
+    my $pusher   = WWW::Pusher->new(key => 'YOUR API KEY', secret => 'YOUR SECRET', app_id => 'YOUR APP ID', channel => 'test_channel');
     my $response = $pusher->trigger(event => 'my_event', data => 'Hello, World!');
 
 =head1 METHODS
 
-=head2 new(key => $api_key, channel => $channel_id, [ host => $host, port => $port, debug => 1 ])
+=head2 new(auth_key => $auth_key, secret => $secret, app_id => $app_id, channel => $channel_id)
 
-Creates a new WWW::Pusher object. Both API key and Channel are mandatory.
+Creates a new WWW::Pusher object. All fields are all mandatory.
 
-You can optionally specify the host and port keys and override using pusherapp.com's 
-server if you wish. Setting debug to a true value will return an L<LWP::UserAgent> response object 
-in the event a trigger fails.
+You can optionally specify the host and port keys and override using pusherapp.com's server if you
+wish. In addtion, setting debug to a true value will return an L<LWP::UserAgent> response object in 
+the event a trigger fails.
 
 =cut
 
@@ -49,19 +51,25 @@ sub new
 {
 	my ($class, %args) = @_;
 	
-	die 'Pusher API key must be defined' unless $args{key};
+	die 'Pusher auth key must be defined' unless $args{auth_key};
+	die 'Pusher secret must be defined'  unless $args{secret};
+	die 'Pusher application ID must be defined' unless $args{app_id};
+	die 'Channel must be defined' unless $args{channel};
 
 	my $self = {
-		uri	=> URI->new($pusher_defaults->{host} || $args{host}),
-		lwp	=> LWP::UserAgent->new,
-		host	=> $args{host} || $pusher_defaults->{host},
-		port	=> $args{port} || $pusher_defaults->{port},
-		key	=> $args{key},
-		channel	=> $args{id}
+		uri	 => URI->new($pusher_defaults->{host} || $args{host}),
+		lwp	 => LWP::UserAgent->new,
+		debug    => $args{debug} || undef,
+		auth_key => $args{auth_key},
+		app_id   => $args{app_id},
+		secret   => $args{secret},
+		channel  => $args{channel},
+		host 	 => $args{host} || $pusher_defaults->{host},
+		port	 => $args{port} || $pusher_defaults->{port}
 	};
 
 	$self->{uri}->port($self->{port});
-	$self->{uri}->path('/app/'.$self->{key}.'/channel/'.$self->{channel});
+	$self->{uri}->path('/apps/'.$self->{app_id}.'/channels/'.$self->{channel}.'/events');
 
 	return bless $self;
 
@@ -70,9 +78,9 @@ sub new
 
 =head2 trigger(event => $event_name, data => $data, [socket_id => $socket_id, debug => 1])
 
-Send an event to the channel. The event name should be a scalar, but data could in theory be a hash/arrayref.
+Send an event to the channel. The event name should be a scalar, but data can be hash/arrayref.
 
-Returns "OK" on success, or undef on failure. Setting "debug" to a true value will return an L<LWP::UserAgent> 
+Returns true on success, or undef on failure. Setting "debug" to a true value will return an L<LWP::UserAgent> 
 response object.
 
 =cut
@@ -81,13 +89,30 @@ sub trigger
 {
 	my ($self, %args) = @_;
 
-	my $payload  = encode_json({ event => $args{event}, data  => $args{data} });
-	my $request  = HTTP::Request->new('POST', $self->{uri}->as_string, ['Content-Type' => 'application/json'], $payload);
+	my $time     = time;
+	my $uri      = $self->{uri}->clone;
+	my $payload  = to_json($args{data}, { allow_nonref => 1 });
+	
+	# The signature needs to have args in an exact order
+	my $params = [
+		'auth_key'       => $self->{auth_key}, 
+		'auth_timestamp' => $time, 		
+		'auth_version'   => '1.0', 
+		'body_md5'       => md5_hex($payload),
+		'name'           => $args{event},
+		'socket_id'      => $args{socket_id} || undef
+	];
+
+	$uri->query_form(@{$params});
+	my $signature      = "POST\n".$uri->path."\n".$uri->query;
+	my $auth_signature = hmac_sha256_hex($signature, $self->{secret});
+
+	my $request  = HTTP::Request->new('POST', $uri->as_string."&auth_signature=".$auth_signature, ['Content-Type' => 'application/json'], $payload);
 	my $response = $self->{lwp}->request($request);
 
-	if($response->is_success)
+	if($response->is_success && $response->content eq "202 ACCEPTED\n")
 	{
-		return $response->content;
+		return 1;
 	}
 	else
 	{
