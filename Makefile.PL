@@ -17,6 +17,7 @@ WriteMakefile(
 	'LWP'            => 0,
 	'URI'            => 0,
 	'JSON'           => 0,
+	'Digest::MD5'    => 2.39,
 	'Digest::SHA'    => 5.48
     },
 
