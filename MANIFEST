@@ -4,6 +4,7 @@ Makefile.PL
 README
 lib/WWW/Pusher.pm
 t/00-load.t
+t/01-push.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
