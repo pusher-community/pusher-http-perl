@@ -1,4 +1,7 @@
 Revision history for WWW::Pusher
 
+0.02	2010-04-28
+	Updated to version 1.0 of the authentication.
+
 0.01    2010-04-11
 	Initial Release 
