@@ -1,5 +1,8 @@
 Revision history for WWW::Pusher
 
+0.03	2010-05-21
+	Added socket_auth to generate socket authentication for private channels.
+
 0.02	2010-04-28
 	Updated to version 1.0 of the authentication.
 
