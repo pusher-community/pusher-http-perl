@@ -110,21 +110,19 @@ sub trigger
 	my $request  = HTTP::Request->new('POST', $uri->as_string."&auth_signature=".$auth_signature, ['Content-Type' => 'application/json'], $payload);
 	my $response = $self->{lwp}->request($request);
 
-	if($response->is_success && $response->content eq "202 ACCEPTED\n")
+	if($self->{debug} || $args{debug})
+	{
+		return $response;
+	}
+	elsif($response->is_success && $response->content eq "202 ACCEPTED\n")
 	{
 		return 1;
 	}
 	else
 	{
-		if($self->{debug} || $args{debug})
-		{
-			return $response;
-		}
-		else
-		{
-			return undef;
-		}
+		return undef;
 	}
+
 }
 
 =head2 socket_auth($socket_id)
