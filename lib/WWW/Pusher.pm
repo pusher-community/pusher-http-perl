@@ -32,8 +32,9 @@ our $VERSION = '0.03';
 
     use WWW::Pusher;
 
-    my $pusher   = WWW::Pusher->new(key => 'YOUR API KEY', secret => 'YOUR SECRET', app_id => 'YOUR APP ID', channel => 'test_channel');
-    my $response = $pusher->trigger(event => 'my_event', data => 'Hello, World!');
+    my $pusher    = WWW::Pusher->new(auth_key => 'YOUR API KEY', secret => 'YOUR SECRET', app_id => 'YOUR APP ID', channel => 'test_channel');
+    my $response  = $pusher->trigger(event => 'my_event', data => 'Hello, World!');
+    my $sock_auth = $pusher->socket_auth('socket_auth_key');
 
 =head1 METHODS
 
