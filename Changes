@@ -1,5 +1,8 @@
 Revision history for WWW::Pusher
 
+0.04	2010-05-21
+	Mildly better documentation (thanks Matthew!), now return HTTP::Response always when debugging.
+
 0.03	2010-05-21
 	Added socket_auth to generate socket authentication for private channels.
 
