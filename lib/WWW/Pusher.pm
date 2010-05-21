@@ -127,6 +127,26 @@ sub trigger
 	}
 }
 
+=head2 socket_auth($socket_id)
+
+In order to establish private channels, your end must hand back a checksummed bit of data that browsers will, 
+in turn will pass onto the pusher servers. On success this will return a JSON encoded hashref for you to give 
+back to the client.
+
+=cut
+
+sub socket_auth
+{
+	my($self, $socket_id)  = @_;
+
+	return undef unless $socket_id;
+	my $signature = hmac_sha256_hex($self->{channel}.':'.$socket_id, $self->{secret});
+
+	return encode_json({ 
+		auth => $self->{'auth_key'}.':'.$signature
+	});
+}
+
 =head1 AUTHOR
 
 Squeeks, C<< <squeek at cpan.org> >>
