@@ -14,7 +14,7 @@ unless( $ENV{PUSHERAPP_AUTHKEY} && $ENV{PUSHERAPP_APPID} && $ENV{PUSHERAPP_SECRE
 	diag("In order to test this against pusherapp.com's servers, ");
 	diag("Set the following environment variable to your account settings:");
 	diag("PUSHERAPP_AUTHKEY - Authentication Key");
-	diag("PUSHERAPP_APPKEY  - Application ID");
+	diag("PUSHERAPP_APPID   - Application ID");
 	diag("PUSHERAPP_SECRET  - Secret");
 	diag("If you have an account, these will be located at http://pusherapp.com/dashboard");
 	diag('');
