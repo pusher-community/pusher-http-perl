@@ -32,7 +32,12 @@ our $VERSION = '0.04';
 
     use WWW::Pusher;
 
-    my $pusher    = WWW::Pusher->new(auth_key => 'YOUR API KEY', secret => 'YOUR SECRET', app_id => 'YOUR APP ID', channel => 'test_channel');
+    my $pusher    = WWW::Pusher->new(
+                         auth_key => 'YOUR API KEY',
+			 secret => 'YOUR SECRET',
+			 app_id => 'YOUR APP ID',
+			 channel => 'test_channel' );
+
     my $response  = $pusher->trigger(event => 'my_event', data => 'Hello, World!');
     my $sock_auth = $pusher->socket_auth('socket_auth_key');
 
@@ -43,8 +48,8 @@ our $VERSION = '0.04';
 Creates a new WWW::Pusher object. All fields are all mandatory.
 
 You can optionally specify the host and port keys and override using pusherapp.com's server if you
-wish. In addtion, setting debug to a true value will return an L<LWP::UserAgent> response object in 
-the event a trigger fails.
+wish. In addtion, setting debug to a true value will return an L<LWP::UserAgent>
+response.
 
 =cut
 
@@ -79,7 +84,7 @@ sub new
 
 =head2 trigger(event => $event_name, data => $data, [socket_id => $socket_id, debug => 1])
 
-Send an event to the channel. The event name should be a scalar, but data can be hash/arrayref.
+Send an event to the channel. The event name should be a scalar, but data can also be hash/arrayref.
 
 Returns true on success, or undef on failure. Setting "debug" to a true value will return an L<LWP::UserAgent> 
 response object.
