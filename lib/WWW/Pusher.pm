@@ -143,7 +143,7 @@ sub socket_auth
 {
 	my($self, $socket_id, $channel)  = @_;
 
-	my $use_channel = defined($channel) && $channel ne '' ? $channel : $self->{channel}
+	my $use_channel = defined($channel) && $channel ne '' ? $channel : $self->{channel};
 
 	return undef unless $socket_id;
 	my $signature = hmac_sha256_hex($socket_id.':'.$use_channel, $self->{secret});
