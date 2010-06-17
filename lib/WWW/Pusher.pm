@@ -141,10 +141,12 @@ back to the client.
 
 sub socket_auth
 {
-	my($self, $socket_id)  = @_;
+	my($self, $socket_id, $channel)  = @_;
+
+	my $use_channel = defined($channel) && $channel ne '' ? $channel : $self->{channel}
 
 	return undef unless $socket_id;
-	my $signature = hmac_sha256_hex($socket_id.':'.$self->{channel}, $self->{secret});
+	my $signature = hmac_sha256_hex($socket_id.':'.$use_channel, $self->{secret});
 
 	return encode_json({ 
 		auth => $self->{'auth_key'}.':'.$signature
