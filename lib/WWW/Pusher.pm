@@ -60,7 +60,6 @@ sub new
 	die 'Pusher auth key must be defined' unless $args{auth_key};
 	die 'Pusher secret must be defined'  unless $args{secret};
 	die 'Pusher application ID must be defined' unless $args{app_id};
-	die 'Channel must be defined' unless $args{channel};
 
 	my $self = {
 		uri	 => URI->new($pusher_defaults->{host} || $args{host}),
@@ -69,7 +68,7 @@ sub new
 		auth_key => $args{auth_key},
 		app_id   => $args{app_id},
 		secret   => $args{secret},
-		channel  => $args{channel},
+		channel  => $args{channel} || '',
 		host 	 => $args{host} || $pusher_defaults->{host},
 		port	 => $args{port} || $pusher_defaults->{port}
 	};
@@ -98,6 +97,11 @@ sub trigger
 	my $time     = time;
 	my $uri      = $self->{uri}->clone;
 	my $payload  = to_json($args{data}, { allow_nonref => 1 });
+
+	if($args{channel} && $args{channel} ne '')
+	{
+		$uri->path('/apps/'.$self->{app_id}.'/channels/'.$args{channel}.'/events');
+	}
 	
 	# The signature needs to have args in an exact order
 	my $params = [
