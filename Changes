@@ -1,5 +1,8 @@
 Revision history for WWW::Pusher
 
+0.05	2010-06-17
+	Channel is no longer mandatory - can be specified anywhere.
+
 0.04	2010-05-21
 	Mildly better documentation (thanks Matthew!), now return HTTP::Response always when debugging.
 
