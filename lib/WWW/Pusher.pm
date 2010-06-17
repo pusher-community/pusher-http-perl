@@ -45,11 +45,12 @@ our $VERSION = '0.04';
 
 =head2 new(auth_key => $auth_key, secret => $secret, app_id => $app_id, channel => $channel_id)
 
-Creates a new WWW::Pusher object. All fields are all mandatory.
+Creates a new WWW::Pusher object. All fields excluding the channel are mandatory, however if 
+you do not set the channel name during construction you must specify it when calling any
+other method.
 
 You can optionally specify the host and port keys and override using pusherapp.com's server if you
-wish. In addtion, setting debug to a true value will return an L<LWP::UserAgent>
-response.
+wish. In addtion, setting debug to a true value will return an L<LWP::UserAgent> response on any request.
 
 =cut
 
@@ -81,9 +82,10 @@ sub new
 }
 
 
-=head2 trigger(event => $event_name, data => $data, [socket_id => $socket_id, debug => 1])
+=head2 trigger(event => $event_name, data => $data, [channel => $channel, socket_id => $socket_id, debug => 1])
 
-Send an event to the channel. The event name should be a scalar, but data can also be hash/arrayref.
+Send an event to the specified channel. The event name should be a scalar, but data can also be hash/arrayref. There 
+should be no need to JSON encode your data.
 
 Returns true on success, or undef on failure. Setting "debug" to a true value will return an L<LWP::UserAgent> 
 response object.
@@ -135,11 +137,11 @@ sub trigger
 
 }
 
-=head2 socket_auth($socket_id)
+=head2 socket_auth($socket_id, [$channel])
 
 In order to establish private channels, your end must hand back a checksummed bit of data that browsers will, 
 in turn will pass onto the pusher servers. On success this will return a JSON encoded hashref for you to give 
-back to the client.
+back to the client. Specifying the channel is optional only if you did not specify it during construction. 
 
 =cut
 
