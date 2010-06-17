@@ -14,5 +14,5 @@ my $pusher = WWW::Pusher->new(
 ok($pusher, 'Created new WWW::Pusher object');
 
 $auth = $pusher->socket_auth('testing_socket_auth');
-is($auth, q({"auth":"thisisaauthkey:b6267e137ee863cca9349fcba866b82fb62a486f3d56d16dadf38c50593aa57f"}), 'Generated socket_auth');
+is($auth, q({"auth":"thisisaauthkey:2e5bce5a9e49d30f02d295834b4de9a33b0cb129fc4e3c26fc131b3ac97e7da1"}), 'Generated socket_auth');
 
