@@ -144,7 +144,7 @@ sub socket_auth
 	my($self, $socket_id)  = @_;
 
 	return undef unless $socket_id;
-	my $signature = hmac_sha256_hex($self->{channel}.':'.$socket_id, $self->{secret});
+	my $signature = hmac_sha256_hex($socket_id.':'.$self->{channel}, $self->{secret});
 
 	return encode_json({ 
 		auth => $self->{'auth_key'}.':'.$signature
