@@ -147,16 +147,43 @@ back to the client. Specifying the channel is optional only if you did not speci
 
 sub socket_auth
 {
-	my($self, $socket_id, $channel)  = @_;
+	my($self, $socket_id, $channel, $custom_string)  = @_;
+
+	return undef unless $socket_id;
 
 	my $use_channel = defined($channel) && $channel ne '' ? $channel : $self->{channel};
 
-	return undef unless $socket_id;
-	my $signature = hmac_sha256_hex($socket_id.':'.$use_channel, $self->{secret});
+	my $signature;
+	if($custom_string)
+	{
+		$signature = hmac_sha256_hex($socket_id.':'.$use_channel, $self->{secret});
+	}
+	else
+	{
+		$signature = hmac_sha256_hex($socket_id.':'.$use_channel.':'.$custom_string, $self->{secret});
+	}
 
 	return encode_json({ 
 		auth => $self->{'auth_key'}.':'.$signature
 	});
+}
+
+=head2 presence_auth($socket_id, $channel, $user_id, { name => $name, email => $email})
+
+Presence channels are an extension of private channels.
+
+The hashref containing the user name and email is completely optional but is supported.
+
+=cut
+
+sub presence_auth
+{
+	(my $self, $socket_id, $user_id, %user_info, $channel) = @_;
+
+	my $user_data = { user_id => $user_id };
+	$user_data->{user_info} = { %user_info } if(%user_info);
+
+	return socket_auth($socket_id, $channel, encode_json($user_data));
 }
 
 =head1 AUTHOR
