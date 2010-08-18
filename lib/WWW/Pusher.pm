@@ -156,11 +156,11 @@ sub socket_auth
 	my $signature;
 	if($custom_string)
 	{
-		$signature = hmac_sha256_hex($socket_id.':'.$use_channel, $self->{secret});
+		$signature = hmac_sha256_hex($socket_id.':'.$use_channel.':'.$custom_string, $self->{secret});	
 	}
 	else
 	{
-		$signature = hmac_sha256_hex($socket_id.':'.$use_channel.':'.$custom_string, $self->{secret});
+		$signature = hmac_sha256_hex($socket_id.':'.$use_channel, $self->{secret});	
 	}
 
 	return encode_json({ 
