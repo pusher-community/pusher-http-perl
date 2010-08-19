@@ -6,6 +6,7 @@ lib/WWW/Pusher.pm
 t/00-load.t
 t/01-push.t
 t/02-socket_auth.t
+t/03-presence.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t
