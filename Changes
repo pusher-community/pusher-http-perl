@@ -1,5 +1,8 @@
 Revision history for WWW::Pusher
 
+0.06	2010-08-19
+	Included presence extension to socket_id
+
 0.05	2010-06-17
 	Channel is no longer mandatory - can be specified anywhere.
 
