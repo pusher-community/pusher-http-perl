@@ -178,7 +178,7 @@ The hashref containing the user name and email is completely optional but is sup
 
 sub presence_auth
 {
-	(my $self, $socket_id, $user_id, %user_info, $channel) = @_;
+	my ($self, $socket_id, $user_id, $channel, %user_info) = @_;
 
 	my $user_data = { user_id => $user_id };
 	$user_data->{user_info} = { %user_info } if(%user_info);
