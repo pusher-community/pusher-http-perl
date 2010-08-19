@@ -168,11 +168,13 @@ sub socket_auth
 	});
 }
 
-=head2 presence_auth($socket_id, $channel, $user_id, { name => $name, email => $email})
+=head2 presence_auth($socket_id, $user_id, [ $channel, { name => $name, email => $email} ])
 
-Presence channels are an extension of private channels.
+Presence signing is exactly like socket ID signing above, only we can include very user-specific data in 
+addition, such as a user ID, name or email. This method generates the signed payload to pass back to Pusher.
 
-The hashref containing the user name and email is completely optional but is supported.
+The socket ID and user ID are mandatory, however both the channel and user info are not. Setting the channel 
+to undef will default to using the channel defined in the WWW::Pusher object.
 
 =cut
 
@@ -183,7 +185,9 @@ sub presence_auth
 	my $user_data = { user_id => $user_id };
 	$user_data->{user_info} = { %user_info } if(%user_info);
 
-	return socket_auth($socket_id, $channel, encode_json($user_data));
+	my $use_channel = defined($channel) && $channel ne '' ? $channel : $self->{channel};
+
+	return socket_auth($socket_id, $use_channel, encode_json($user_data));
 }
 
 =head1 AUTHOR
