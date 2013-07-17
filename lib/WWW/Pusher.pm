@@ -63,7 +63,7 @@ sub new
 	die 'Pusher application ID must be defined' unless $args{app_id};
 
 	my $self = {
-		uri	 => URI->new($pusher_defaults->{host} || $args{host}),
+		uri	 => URI->new($args{host} || $pusher_defaults->{host}),
 		lwp	 => LWP::UserAgent->new,
 		debug    => $args{debug} || undef,
 		auth_key => $args{auth_key},
