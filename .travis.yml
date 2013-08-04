@@ -1,0 +1,2 @@
+language: perl
+script: perl Makefile.PL && make && make test
