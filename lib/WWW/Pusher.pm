@@ -11,11 +11,6 @@ use LWP::UserAgent;
 use Digest::MD5 qw(md5_hex);
 use Digest::SHA qw(hmac_sha256_hex);
 
-my $pusher_defaults = {
-	host => 'http://api.pusherapp.com',
-	port => 80
-};
-
 =head1 NAME
 
 WWW::Pusher - Interface to the Pusher WebSockets API
@@ -33,10 +28,11 @@ our $VERSION = '0.07';
     use WWW::Pusher;
 
     my $pusher    = WWW::Pusher->new(
-                         auth_key => 'YOUR API KEY',
-			 secret => 'YOUR SECRET',
-			 app_id => 'YOUR APP ID',
-			 channel => 'test_channel' );
+        auth_key => 'YOUR API KEY',
+        secret => 'YOUR SECRET',
+        app_id => 'YOUR APP ID',
+        channel => 'test_channel',
+        cluster => 'app cluster' );
 
     my $response  = $pusher->trigger(event => 'my_event', data => 'Hello, World!');
     my $sock_auth = $pusher->socket_auth('socket_auth_key');
@@ -61,17 +57,21 @@ sub new
 	die 'Pusher auth key must be defined' unless $args{auth_key};
 	die 'Pusher secret must be defined'  unless $args{secret};
 	die 'Pusher application ID must be defined' unless $args{app_id};
+       die 'Pusher cluster must be defined' unless $args{cluster};
+
+       my $default_host = 'http://api-' . $args{cluster} . '.pusher.com';
 
 	my $self = {
-		uri	 => URI->new($args{host} || $pusher_defaults->{host}),
+		uri	 => URI->new($args{host} || $default_host,
 		lwp	 => LWP::UserAgent->new,
 		debug    => $args{debug} || undef,
 		auth_key => $args{auth_key},
 		app_id   => $args{app_id},
 		secret   => $args{secret},
 		channel  => $args{channel} || '',
-		host 	 => $args{host} || $pusher_defaults->{host},
-		port	 => $args{port} || $pusher_defaults->{port}
+		host 	 => $args{host} || $default_host,
+		port	 => $args{port} || 80,
+               cluster  => $args{cluster},
 	};
 
 	$self->{uri}->port($self->{port});
