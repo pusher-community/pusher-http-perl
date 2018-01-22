@@ -62,7 +62,7 @@ sub new
        my $default_host = 'http://api-' . $args{cluster} . '.pusher.com';
 
 	my $self = {
-		uri	 => URI->new($args{host} || $default_host,
+		uri	 => URI->new($args{host} || $default_host),
 		lwp	 => LWP::UserAgent->new,
 		debug    => $args{debug} || undef,
 		auth_key => $args{auth_key},
@@ -71,7 +71,6 @@ sub new
 		channel  => $args{channel} || '',
 		host 	 => $args{host} || $default_host,
 		port	 => $args{port} || 80,
-               cluster  => $args{cluster},
 	};
 
 	$self->{uri}->port($self->{port});
